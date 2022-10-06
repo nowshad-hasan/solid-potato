@@ -1,17 +1,87 @@
 plugins {
     id 'java'
-}
-
-group 'io.github.nowshad-hasan' // your group id
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
+    id 'maven-publish'
+    id 'signing'
 }
 sourceSets {
     main {
         java {
             srcDirs = ['src']
         }
+    }
+}
+
+group 'io.github.nowshad-hasan' // your group id
+version '1.0.3'
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+
+        mavenJava(MavenPublication) {
+
+            groupId = 'io.github.nowshad-hasan'
+            artifactId = 'solid-potato'
+            version = '1.0.3'
+            from components.java
+
+            pom {
+                name = 'Solid Potato'
+                description = 'Solid Potato is a fun project which is created to make the tutorial - ' +
+                        'How to Create A Java Library and Publish It To Maven With Gradle-7'
+                url = 'https://github.com/nowshad-hasan/solid-potato'
+                inceptionYear = '2022'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'nowshad-hasan'
+                        name = 'Nowshad Hasan'
+                        email = 'nowshadapu@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git:github.com/nowshad-hasan/solid-potato.git'
+                    developerConnection = 'scm:git:ssh://github.com/nowshad-hasan/solid-potato.git'
+                    url = 'https://github.com/nowshad-hasan/solid-potato'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = project.properties["username"]
+                password = project.properties["password"]
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
